@@ -1,0 +1,5 @@
+Colors:
+Board Background: #000035
+L: Teal: #67CCC0
+T: Pink: #D880CA
+O: Green: #67CC83
