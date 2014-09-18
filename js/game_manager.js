@@ -63,13 +63,28 @@ GameManager.prototype.addStartTiles = function () {
   // for (var i = 0; i < this.startTiles; i++) {
   //   this.addRandomTile();
   // }
-  tile = new Tile({ x: 5, y: 3 },"T")
-  
+  tile = new Tile({ x: 4, y: 3 },"T")
   this.grid.insertTile(tile)
-  tile = new Tile({ x: 5, y: 4 },"L")
   
+  tile = new Tile({ x: 4, y: 4 },"L")
+  this.grid.insertTile(tile)
+  
+  tile = new Tile({ x: 4, y: 2 },"S")
+  this.grid.insertTile(tile)
+  
+  tile = new Tile({ x: 3, y:  3},"O")
+  this.grid.insertTile(tile)
+  
+  tile = new Tile({ x: 3, y:  2},"Z")
+  this.grid.insertTile(tile)
+  
+  tile = new Tile({ x: 3, y:  4},"J")
+  this.grid.insertTile(tile)
+  
+  tile = new Tile({ x: 2, y:  2},"W")
   this.grid.insertTile(tile)
 };
+
 
 // // Adds a tile in a random position
 // GameManager.prototype.addRandomTile = function () {
@@ -98,7 +113,7 @@ GameManager.prototype.actuate = function () {
     score:      this.score,
     over:       this.over,
     won:        this.won,
-    bestScore:  this.storageManager.getBestScore(),
+    bestScore:  0,//this.storageManager.getBestScore(),
     terminated: this.isGameTerminated()
   });
 
@@ -175,7 +190,9 @@ GameManager.prototype.move = function (direction) {
         //   // The mighty 2048 tile
         //   if (merged.value === 2048) self.won = true;
         // } else {
+          if (tile.type != "W"){
           self.moveTile(tile, positions.farthest);
+          }
         // }
 
         if (!self.positionsEqual(cell, tile)) {
