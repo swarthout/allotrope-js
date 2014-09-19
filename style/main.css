@@ -219,7 +219,7 @@ hr {
   margin-right: 3px;
   float: left;
   border-radius: 3px;
-  background-image: url("file:///home/chronos/u-d3b57c713d5e4509a0c4be93cec22db57192ea99/Downloads/allotrope-js/checkered_border_transparent.png");
+  background-image: url("http://scott-swarthout/github.io/allotrope-js/checkered_border_transparent.png");
   background-color: rgba(255, 255, 255, 0.35);
 }
 .grid-cell {
@@ -652,7 +652,7 @@ hr {
   margin-right: 3px;
   float: left;
   border-radius: 3px;
-  background-image: url("file:///home/chronos/u-d3b57c713d5e4509a0c4be93cec22db57192ea99/Downloads/allotrope-js/checkered_border_transparent_small.png");
+  background-image: url("http://scott-swarthout/github.io/allotrope-js/checkered_border_transparent_small.png");
   background-color: rgba(255, 255, 255, 0.35);
 }
 
