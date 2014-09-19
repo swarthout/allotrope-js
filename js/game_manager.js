@@ -85,6 +85,33 @@ GameManager.prototype.addStartTiles = function () {
   this.grid.insertTile(tile)
 };
 
+GameManager.prototype.addT = function(position,orientation){ //adds a tile with the upper left of the tile matrix in "position" and with orientation specified
+  
+}
+
+GameManager.prototype.addL = function(position,orientation){
+  
+}
+
+GameManager.prototype.addS = function(position,orientation){
+  
+}
+
+GameManager.prototype.addO = function(position,orientation){
+  
+}
+
+GameManager.prototype.addZ = function(position,orientation){
+  
+}
+
+GameManager.prototype.addJ = function(position,orientation){
+  
+}
+
+GameManager.prototype.addW = function(position,orientation){
+  
+}
 
 // // Adds a tile in a random position
 // GameManager.prototype.addRandomTile = function () {
