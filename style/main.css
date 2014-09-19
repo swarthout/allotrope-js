@@ -648,8 +648,8 @@ hr {
     margin-top: 2px; }
     
   .grid-goalcell{
-  width: 102px;/*Changed Value*/
-  height: 102px;/*Changed Value*/
+  width: 45px;/*Changed Value*/
+  height: 45px;/*Changed Value*/
   margin-right: 3px;
   float: left;
   border-radius: 3px;
