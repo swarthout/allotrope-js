@@ -213,14 +213,23 @@ hr {
     content: "";
     display: block;
     clear: both; }
-
+.grid-goalcell{
+  width: 102px;/*Changed Value*/
+  height: 102px;/*Changed Value*/
+  margin-right: 3px;
+  float: left;
+  border-radius: 3px;
+  background-image: url("file:///home/chronos/u-d3b57c713d5e4509a0c4be93cec22db57192ea99/Downloads/allotrope-js/checkered_border_transparent.png");
+  background-color: rgba(255, 255, 255, 0.35);
+}
 .grid-cell {
   width: 102px;/*Changed Value*/
   height: 102px;/*Changed Value*/
   margin-right: 3px;
   float: left;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.35); }
+  background-color: rgba(255, 255, 255, 0.35);
+  }
   .grid-cell:last-child {
     margin-right: 0; }
 
@@ -385,7 +394,7 @@ hr {
   -moz-transition-property: -moz-transform;
   transition-property: transform; }
   .tile .tile-inner {
-    border-radius: 3px;
+    
     background: #eee4da;
     text-align: center;
     font-weight: bold;
@@ -393,25 +402,41 @@ hr {
     font-size: 55px; }
   .tile.tile-T .tile-inner {
     background: #D880CA;
+    border-radius: 3px;
     /*box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0); }*/}
   .tile.tile-L .tile-inner {
     background: #7BECDF;
+    border-radius: 3px;
     /*box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0); }*/}
   .tile.tile-O .tile-inner {
     color: #f9f6f2;
-    background: #67CC83; }
+    background: #67CC83;
+    border-radius: 3px;}
   .tile.tile-S .tile-inner {
     color: #f9f6f2;
-    background: #759AFA; }
+    background: #759AFA;
+    border-radius: 3px;
+  }
   .tile.tile-Z .tile-inner {
     color: #f9f6f2;
-    background: #E0E044; }
+    background: #E0E044;
+    border-radius: 3px;
+  }
   .tile.tile-J .tile-inner {
     color: #f9f6f2;
-    background: #C466F0; }
+    background: #C466F0;
+    border-radius: 3px;
+  }
   .tile.tile-W .tile-inner {
     color: #f9f6f2;
-    background: #000035; }
+    background: #000035;
+    border-radius: 3px;
+  }
+  .tile.tile-B .tile-inner {
+    color: #f9f6f2;
+    background: #FFFFFF;
+    border-radius: 51px;
+  }
   /*.tile.tile-128 .tile-inner {*/
   /*  color: #f9f6f2;*/
   /*  background: #edcf72;*/
@@ -620,6 +645,16 @@ hr {
     display: block;
     box-sizing: border-box;
     margin-top: 2px; }
+    
+  .grid-goalcell{
+  width: 102px;/*Changed Value*/
+  height: 102px;/*Changed Value*/
+  margin-right: 3px;
+  float: left;
+  border-radius: 3px;
+  background-image: url("file:///home/chronos/u-d3b57c713d5e4509a0c4be93cec22db57192ea99/Downloads/allotrope-js/checkered_border_transparent_small.png");
+  background-color: rgba(255, 255, 255, 0.35);
+}
 
   .game-container {
     margin-top: 17px;

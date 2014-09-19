@@ -83,6 +83,9 @@ GameManager.prototype.addStartTiles = function () {
   
   tile = new Tile({ x: 2, y:  2},"W")
   this.grid.insertTile(tile)
+  
+  tile = new Tile({ x: 2, y:  1},"B")
+  this.grid.insertTile(tile)
 };
 
 GameManager.prototype.addT = function(position,orientation){ //adds a tile with the upper left of the tile matrix in "position" and with orientation specified
