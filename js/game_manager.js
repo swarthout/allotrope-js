@@ -63,58 +63,37 @@ GameManager.prototype.addStartTiles = function () {
   // for (var i = 0; i < this.startTiles; i++) {
   //   this.addRandomTile();
   // }
-  tile = new Tile({ x: 4, y: 3 },"T")
-  this.grid.insertTile(tile)
+  // tile = new Tile({ x: 4, y: 3 },"T")
+  // this.grid.insertTile(tile)
   
-  tile = new Tile({ x: 4, y: 4 },"L")
-  this.grid.insertTile(tile)
+  // tile = new Tile({ x: 4, y: 4 },"L")
+  // this.grid.insertTile(tile)
   
-  tile = new Tile({ x: 4, y: 2 },"S")
-  this.grid.insertTile(tile)
+  // tile = new Tile({ x: 4, y: 2 },"S")
+  // this.grid.insertTile(tile)
   
-  tile = new Tile({ x: 3, y:  3},"O")
-  this.grid.insertTile(tile)
+  // tile = new Tile({ x: 3, y:  3},"O")
+  // this.grid.insertTile(tile)
   
-  tile = new Tile({ x: 3, y:  2},"Z")
-  this.grid.insertTile(tile)
+  // tile = new Tile({ x: 3, y:  2},"Z")
+  // this.grid.insertTile(tile)
   
-  tile = new Tile({ x: 3, y:  4},"J")
-  this.grid.insertTile(tile)
+  // tile = new Tile({ x: 3, y:  4},"J")
+  // this.grid.insertTile(tile)
   
-  tile = new Tile({ x: 2, y:  2},"W")
-  this.grid.insertTile(tile)
+  // tile = new Tile({ x: 2, y:  2},"W")
+  // this.grid.insertTile(tile)
   
-  tile = new Tile({ x: 2, y:  1},"B")
-  this.grid.insertTile(tile)
+  // tile = new Tile({ x: 2, y:  1},"B")
+  // this.grid.insertTile(tile)
+  
+  this.grid.addTetramino("T",{x:0,y:0},"top");
+  this.grid.addTetramino("L",{x:4,y:3},"left");
+  this.grid.addTetramino("O",{x:0,y:4},"top");
 };
 
-GameManager.prototype.addT = function(position,orientation){ //adds a tile with the upper left of the tile matrix in "position" and with orientation specified
-  
-}
 
-GameManager.prototype.addL = function(position,orientation){
-  
-}
 
-GameManager.prototype.addS = function(position,orientation){
-  
-}
-
-GameManager.prototype.addO = function(position,orientation){
-  
-}
-
-GameManager.prototype.addZ = function(position,orientation){
-  
-}
-
-GameManager.prototype.addJ = function(position,orientation){
-  
-}
-
-GameManager.prototype.addW = function(position,orientation){
-  
-}
 
 // // Adds a tile in a random position
 // GameManager.prototype.addRandomTile = function () {
@@ -194,6 +173,9 @@ GameManager.prototype.move = function (direction) {
   this.prepareTiles();
 
   // Traverse the grid in the right direction and move tiles
+  
+  var distanceList = [];
+  var tileTypes = [];
   traversals.x.forEach(function (x) {
     traversals.y.forEach(function (y) {
       cell = { x: x, y: y };
@@ -201,8 +183,87 @@ GameManager.prototype.move = function (direction) {
 
       if (tile) {
         var positions = self.findFarthestPosition(cell, vector);
+        
+        
         var next      = self.grid.cellContent(positions.next);
+       
+        
+        if (tileTypes.indexOf(tile.type) < 0) { // if the tile is the first tile of a piece
+          
+        
+          tileTypes.push(tile.type);
+          
+          
+          distanceList.push({"type":tile.type,"order":distanceList.length-1,"distance":positions.farthest});
+          
+        }
+    
+              for(var n = 0;n<distanceList.length;n++){
+                if (distanceList[n].type == tile.type){
+                  tile.order = distanceList[n].order;
+                  break;
+                }
+                
+              
+              }
+             
+             if(next && tileTypes.indexOf(next.type) >= 0){ //If there is a tile in the way of the tile and it has been seen before
+               if(next.type == tile.type){
+                 //Do nothing
+               }
+               
+                 
+                 for(var z = 0;z<distanceList.length;z++){
+                if (distanceList[z].type == next.type)
+                {
+                  distanceList[tile.order].distance = (positions.farthest + distanceList[z].distance); //This doesn't work because you are adding two objects together
+                }
 
+              
+               }
+             }
+    
+          /*
+          To make this work we need a function that can tell if one object, {x: a, y:b}, is farther from the piece than another object, {x: c, y:d}. this would depend on which way the board is moving.
+          The function should take the two position objects and a vector as arguments and output the farther one.
+        
+          
+          */
+        
+          
+        else{
+          if (positions.farthest <= distanceList[tile.order].distance){//This doesn't work because you are adding two objects together
+            distanceList[tile.order].distance = positions.farthest;
+          }
+      }
+      }
+ 
+      traversals.x.forEach(function (x) {
+        traversals.y.forEach(function (y) {
+          newcell = { x: x, y: y };
+          newtile = self.grid.cellContent(newcell);
+          
+          if (newtile.type != "W"){
+            for(var g = 0;g<distanceList.length;g++){
+                if (distanceList[g].type == newtile.type)
+                {
+                  self.moveTile(newtile, distanceList[g].distance);
+                  break;
+                }
+
+                // distanceList[tile.order] = (positions.farthest + eval(next.type)); //Fix this, need to add together the distance to next tile and the distance from that tile to its next tile
+               }
+          
+          }
+        // }
+
+        if (!self.positionsEqual(newcell, newtile)) {
+          moved = true; // The tile moved from its original cell!
+        }
+        
+      
+        
+      
         // Only one merger per row traversal?
         // if (next && next.value === tile.value && !next.mergedFrom) {
         //   var merged = new Tile(positions.next, tile.value * 2);
@@ -220,18 +281,7 @@ GameManager.prototype.move = function (direction) {
         //   // The mighty 2048 tile
         //   if (merged.value === 2048) self.won = true;
         // } else {
-          if (tile.type != "W"){
-          self.moveTile(tile, positions.farthest);
-          }
-        // }
-
-        if (!self.positionsEqual(cell, tile)) {
-          moved = true; // The tile moved from its original cell!
-        }
-      }
-    });
-  });
-
+          
   if (moved) {
     // this.addRandomTile();
 
@@ -241,6 +291,13 @@ GameManager.prototype.move = function (direction) {
 
     this.actuate();
   }
+      
+
+});
+});
+
+});
+});
 };
 
 // Get the vector representing the chosen direction

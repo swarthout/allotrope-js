@@ -1,3 +1,181 @@
+var tetras = {
+  "T":{
+    'type': "T",
+    "orientations":{
+      
+     "top":[[1,1,1],
+      [0,1,0],
+      [0,0,0]],
+     
+     "right":[[0,0,1],
+              [0,1,1],
+              [0,0,1]],
+     
+     "bottom":[[0,0,0],
+               [0,1,0],
+               [1,1,1]],
+     
+     "left":[[1,0,0],
+      [1,1,0],
+      [1,0,0]]
+ 
+    }
+    ,
+    
+    "order":null
+    
+    
+},
+
+   "L":{
+     'type': "L",
+    "orientations":{
+      
+    'top': [[1,1,1],
+            [1,0,0],
+            [0,0,0]],
+     
+    'right' : [[0,1,1],
+              [0,0,1],
+              [0,0,1]],
+     
+    'bottom' : [[0,0,0],
+               [0,0,1],
+               [1,1,1]],
+     
+    'left' : [[1,0,0],
+             [1,0,0],
+             [1,1,0]]
+ 
+    }
+    ,
+    
+    "order":null
+    
+    
+},
+
+    "O":{
+    'type': "O",
+    "orientations":{
+      
+    'top':[[1,1,0],
+            [1,1,0],
+            [0,0,0]],
+     
+    'right':[[0,1,1],
+              [0,1,1],
+              [0,0,0]],
+     
+    'bottom':[[0,0,0],
+               [0,1,1],
+               [0,1,1]],
+     
+    'left':[[0,0,0],
+             [1,1,0],
+             [1,1,0]]
+ 
+    }
+    ,
+    
+    "order":null
+    
+    
+},
+
+    "S":{
+      'type': "S",
+    
+    "orientations":{
+      
+    'top':[[0,1,1],
+            [1,1,0],
+            [0,0,0]],
+     
+    'right':[[0,1,0],
+              [0,1,1],
+              [0,0,1]],
+     
+    'bottom':[[0,0,0],
+               [0,1,1],
+               [1,1,0]],
+     
+    'left':[[1,0,0],
+             [1,1,0],
+             [0,1,0]]
+ 
+    }
+    ,
+    
+    "order":null
+    
+    
+},
+
+    "Z":{
+      'type': "Z",
+    "orientations":{
+      
+    'top':[[1,1,0],
+            [0,1,1],
+            [0,0,0]],
+     
+    'right':[[0,0,1],
+              [0,1,1],
+              [0,1,0]],
+     
+    'bottom':[[0,0,0],
+               [1,1,0],
+               [0,1,1]],
+     
+    'left':[[0,1,0],
+             [1,1,0],
+             [1,0,0]]
+ 
+    }
+    ,
+    
+    "order":null
+},
+
+    "J":{
+    'type': "J",
+    "orientations":{
+      
+    'top':[[1,1,1],
+            [0,0,1],
+            [0,0,0]],
+     
+    'right':[[0,0,1],
+              [0,0,1],
+              [0,1,1]],
+     
+    'bottom':[[0,0,0],
+               [0,0,1],
+               [1,1,1]],
+     
+    'left':[[1,0,0],
+             [1,0,0],
+             [1,1,0]]
+ 
+    }
+    ,
+    
+    "order":null
+    
+},
+    "W": {
+        
+        "position":{
+          "x":null,
+          "y":null
+        }
+    
+    
+}
+  
+};
+
 function Grid(size, previousState) {
   this.size = size;
   this.cells = previousState ? this.fromState(previousState) : this.empty();
@@ -89,6 +267,31 @@ Grid.prototype.cellContent = function (cell) {
 Grid.prototype.insertTile = function (tile) {
   this.cells[tile.x][tile.y] = tile;
 };
+
+Grid.prototype.addTetramino = function(type,pos,orientation){
+  var piece = {}; //adds a tile with the upper left of the tile matrix in "position" and with orientation specified
+  
+  piece = eval("tetras."+type);
+  var matrix = eval("tetras."+type+".orientations."+orientation);
+
+  var xpos = pos.x;
+  var ypos = pos.y;
+  
+  for(var n = 0;n<matrix.length;n++){
+    for(var m = 0; m< matrix[n].length;m++){
+      var location = {};
+      location.x = xpos + m;
+      location.y = ypos + n;
+      if(matrix[n][m] !== 0){
+      tile = new Tile(location,piece.type);
+      this.insertTile(tile);
+      }
+    }
+  }
+  
+};
+
+
 
 Grid.prototype.removeTile = function (tile) {
   this.cells[tile.x][tile.y] = null;
