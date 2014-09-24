@@ -87,9 +87,9 @@ GameManager.prototype.addStartTiles = function () {
   // tile = new Tile({ x: 2, y:  1},"B")
   // this.grid.insertTile(tile)
   
-  this.grid.addTetramino("T",{x:0,y:0},"top");
-  this.grid.addTetramino("L",{x:4,y:3},"left");
-  this.grid.addTetramino("O",{x:0,y:4},"top");
+  // this.grid.addTetramino("T",{x:0,y:0},"top");
+  this.grid.addTetramino("Z",{x:4,y:3},"left");
+  // this.grid.addTetramino("O",{x:0,y:4},"top");
 };
 
 
@@ -156,10 +156,55 @@ GameManager.prototype.moveTile = function (tile, cell) {
   tile.updatePosition(cell);
 };
 
+
+GameManager.prototype.distanceCompare = function(cell1, cell2, vector){ //returns the farther cell based on which direction the board is shifting
+  
+  switch(vector){
+    
+    case {x:0,y:-1}:
+      if(cell1.y > cell2.y){
+        return cell1;
+      }else{
+        return cell2;
+      }
+      break;
+      
+    case {x:0,y:1}:
+      if(cell1.y < cell2.y){
+        return cell1;
+      }else{
+        return cell2;
+      }
+      break;
+      
+    case {x:-1,y:0}:
+      if(cell1.x > cell2.x){
+        return cell1;
+      }else{
+        return cell2;
+      }
+      break;
+      
+    case {x:1,y:0}:
+      if(cell1.y < cell2.y){
+        return cell1;
+      }else{
+        return cell2;
+      }
+      break;
+    
+  }
+  
+};
 // Move tiles on the grid in the specified direction
 GameManager.prototype.move = function (direction) {
   // 0: up, 1: right, 2: down, 3: left
   var self = this;
+  
+  inList = function(item,list){
+    return !!list[item];
+  };
+
 
   if (this.isGameTerminated()) return; // Don't do anything if the game's over
 
@@ -171,134 +216,89 @@ GameManager.prototype.move = function (direction) {
 
   // Save the current tile positions and remove merger information
   this.prepareTiles();
-
+  
+  getDistance = function(a,b){
+  
+  return(a==0?b:a);
+};
   // Traverse the grid in the right direction and move tiles
   
-  var distanceList = [];
-  var tileTypes = [];
+  var distanceList = {};
+  var count = 0;
   traversals.x.forEach(function (x) {
     traversals.y.forEach(function (y) {
       cell = { x: x, y: y };
       tile = self.grid.cellContent(cell);
+      
 
       if (tile) {
         var positions = self.findFarthestPosition(cell, vector);
         
+        var next  = self.grid.cellContent(positions.next);
         
-        var next      = self.grid.cellContent(positions.next);
-       
+        var deltaX =positions.farthest.x - cell.x;
+        var deltaY =positions.farthest.y - cell.y;
         
-        if (tileTypes.indexOf(tile.type) < 0) { // if the tile is the first tile of a piece
-          
+        var maxDisplacement = getDistance(deltaX,deltaY);
+        console.log(maxDisplacement,tile.type);
         
-          tileTypes.push(tile.type);
+        if(!inList(tile.type,distanceList)){
+          
+          distanceList[tile.type] = maxDisplacement;
           
           
-          distanceList.push({"type":tile.type,"order":distanceList.length-1,"distance":positions.farthest});
           
         }
-    
-              for(var n = 0;n<distanceList.length;n++){
-                if (distanceList[n].type == tile.type){
-                  tile.order = distanceList[n].order;
-                  break;
-                }
-                
-              
-              }
-             
-             if(next && tileTypes.indexOf(next.type) >= 0){ //If there is a tile in the way of the tile and it has been seen before
-               if(next.type == tile.type){
-                 //Do nothing
-               }
-               
-                 
-                 for(var z = 0;z<distanceList.length;z++){
-                if (distanceList[z].type == next.type)
-                {
-                  distanceList[tile.order].distance = (positions.farthest + distanceList[z].distance); //This doesn't work because you are adding two objects together
-                }
-
-              
-               }
-             }
-    
-          /*
-          To make this work we need a function that can tell if one object, {x: a, y:b}, is farther from the piece than another object, {x: c, y:d}. this would depend on which way the board is moving.
-          The function should take the two position objects and a vector as arguments and output the farther one.
         
-          
-          */
-        
-          
         else{
-          if (positions.farthest <= distanceList[tile.order].distance){//This doesn't work because you are adding two objects together
-            distanceList[tile.order].distance = positions.farthest;
+          if(next && tile.type !== next.type || !next){
+          distanceList[tile.type] = Math.abs(maxDisplacement) <= Math.abs(distanceList[tile.type])? maxDisplacement:distanceList[tile.type];
           }
-      }
-      }
- 
-      traversals.x.forEach(function (x) {
-        traversals.y.forEach(function (y) {
-          newcell = { x: x, y: y };
-          newtile = self.grid.cellContent(newcell);
           
-          if (newtile.type != "W"){
-            for(var g = 0;g<distanceList.length;g++){
-                if (distanceList[g].type == newtile.type)
-                {
-                  self.moveTile(newtile, distanceList[g].distance);
-                  break;
-                }
-
-                // distanceList[tile.order] = (positions.farthest + eval(next.type)); //Fix this, need to add together the distance to next tile and the distance from that tile to its next tile
-               }
           
-          }
-        // }
+        }
+      }
+      
 
-        if (!self.positionsEqual(newcell, newtile)) {
+        
+});
+});
+console.log(distanceList['T']);
+traversals.x.forEach(function (x) {
+    traversals.y.forEach(function (y) {
+      newcell = { x: x, y: y };
+      newtile = self.grid.cellContent(newcell);
+      
+      if(newtile){
+      var newPosition = {};
+      
+      var shiftlength = distanceList[newtile.type];
+      
+      newPosition.x = (Math.abs(shiftlength)*vector.x) + newcell.x;
+      newPosition.y = (Math.abs(shiftlength)*vector.y) + newcell.y;
+      
+      self.moveTile(newtile, newPosition);
+      if (!self.positionsEqual(newcell, newPosition)) {
           moved = true; // The tile moved from its original cell!
         }
-        
-      
-        
-      
-        // Only one merger per row traversal?
-        // if (next && next.value === tile.value && !next.mergedFrom) {
-        //   var merged = new Tile(positions.next, tile.value * 2);
-        //   merged.mergedFrom = [tile, next];
-
-        //   self.grid.insertTile(merged);
-        //   self.grid.removeTile(tile);
-
-        //   // Converge the two tiles' positions
-        //   tile.updatePosition(positions.next);
-
-        //   // Update the score
-        //   self.score += merged.value;
-
-        //   // The mighty 2048 tile
-        //   if (merged.value === 2048) self.won = true;
-        // } else {
-          
-  if (moved) {
+        if (moved) {
     // this.addRandomTile();
 
-    if (!this.movesAvailable()) {
+    if (!self.movesAvailable()) {
       this.over = true; // Game over!
     }
 
-    this.actuate();
+    self.actuate();
   }
-      
+        
+      }
+    });
+});
 
-});
-});
 
-});
-});
-};
+  
+  };
+
 
 // Get the vector representing the chosen direction
 GameManager.prototype.getVector = function (direction) {
@@ -346,7 +346,7 @@ GameManager.prototype.findFarthestPosition = function (cell, vector) {
 };
 
 GameManager.prototype.movesAvailable = function () {
-  return this.grid.cellsAvailable() //|| this.tileMatchesAvailable();
+  return this.grid.cellsAvailable(); //|| this.tileMatchesAvailable();
 };
 
 // Check for available matches between tiles (more expensive check)
