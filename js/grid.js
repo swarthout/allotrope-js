@@ -271,8 +271,10 @@ Grid.prototype.insertTile = function (tile) {
 Grid.prototype.addTetramino = function(type,pos,orientation){
   var piece = {}; //adds a tile with the upper left of the tile matrix in "position" and with orientation specified
   
-  piece = eval("tetras."+type);
-  var matrix = eval("tetras."+type+".orientations."+orientation);
+  piece = tetras[type];
+  var matrix = [];
+  matrix = tetras[type]["orientations"][orientation];
+
 
   var xpos = pos.x;
   var ypos = pos.y;
@@ -290,8 +292,15 @@ Grid.prototype.addTetramino = function(type,pos,orientation){
   }
   
 };
+Grid.prototype.addWall = function(pos){
+  tile = new Tile(pos,"W");
+  this.insertTile(tile);
+};
 
-
+Grid.prototype.addBall = function(pos){
+  tile = new Tile(pos,"B");
+  this.insertTile(tile);
+};
 
 Grid.prototype.removeTile = function (tile) {
   this.cells[tile.x][tile.y] = null;

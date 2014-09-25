@@ -60,36 +60,14 @@ GameManager.prototype.setup = function () {
 
 // Set up the initial tiles to start the game with
 GameManager.prototype.addStartTiles = function () {
-  // for (var i = 0; i < this.startTiles; i++) {
-  //   this.addRandomTile();
-  // }
-  // tile = new Tile({ x: 4, y: 3 },"T")
-  // this.grid.insertTile(tile)
   
-  // tile = new Tile({ x: 4, y: 4 },"L")
-  // this.grid.insertTile(tile)
   
-  // tile = new Tile({ x: 4, y: 2 },"S")
-  // this.grid.insertTile(tile)
+  this.grid.addTetramino("T",{x:0,y:4},"top");
+  this.grid.addTetramino("Z",{x:3,y:1},"bottom");
+  this.grid.addTetramino("S",{x:0,y:0},"right");
+  this.grid.addWall({x:2,y:3});
+  this.grid.addBall({x:0,y:0});
   
-  // tile = new Tile({ x: 3, y:  3},"O")
-  // this.grid.insertTile(tile)
-  
-  // tile = new Tile({ x: 3, y:  2},"Z")
-  // this.grid.insertTile(tile)
-  
-  // tile = new Tile({ x: 3, y:  4},"J")
-  // this.grid.insertTile(tile)
-  
-  // tile = new Tile({ x: 2, y:  2},"W")
-  // this.grid.insertTile(tile)
-  
-  // tile = new Tile({ x: 2, y:  1},"B")
-  // this.grid.insertTile(tile)
-  
-  this.grid.addTetramino("T",{x:1,y:0},"top");
-  this.grid.addTetramino("Z",{x:3,y:3},"top");
-  // this.grid.addTetramino("O",{x:0,y:4},"top");
 };
 
 
@@ -157,53 +135,13 @@ GameManager.prototype.moveTile = function (tile, cell) {
 };
 
 
-GameManager.prototype.distanceCompare = function(cell1, cell2, vector){ //returns the farther cell based on which direction the board is shifting
-  
-  switch(vector){
-    
-    case {x:0,y:-1}:
-      if(cell1.y > cell2.y){
-        return cell1;
-      }else{
-        return cell2;
-      }
-      break;
-      
-    case {x:0,y:1}:
-      if(cell1.y < cell2.y){
-        return cell1;
-      }else{
-        return cell2;
-      }
-      break;
-      
-    case {x:-1,y:0}:
-      if(cell1.x > cell2.x){
-        return cell1;
-      }else{
-        return cell2;
-      }
-      break;
-      
-    case {x:1,y:0}:
-      if(cell1.y < cell2.y){
-        return cell1;
-      }else{
-        return cell2;
-      }
-      break;
-    
-  }
-  
-};
-
 // Move tiles on the grid in the specified direction
 GameManager.prototype.move = function (direction) {
   // 0: up, 1: right, 2: down, 3: left
   var self = this;
   
   inList = function(item,list){
-    if(list[item] == 0) return true
+    if(list[item] == 0) return true;
     return !!list[item];
   };
 
@@ -227,15 +165,18 @@ GameManager.prototype.move = function (direction) {
   
   var distanceList = {};
   var count = 0;
-  if(vector.x == 0){
-  traversals.y.forEach(function (x) {
-    traversals.x.forEach(function (y) {
+  
+  if(vector.x == 1 &&vector.y ==0 || vector.x == -1 && vector.y == 0){
+    console.log('Moving left or right...');
+  traversals.x.forEach(function (x) {//{ for(var x = 0;x<this.size;x++){
+    traversals.y.forEach(function (y) {//{ for(var y = 0;)
       cell = { x: x, y: y };
       console.log(cell);
       tile = self.grid.cellContent(cell);
       
 
       if (tile) {
+        if(tile.type == "W") distanceList[tile.type] =0;
         var positions = self.findFarthestPosition(cell, vector);
         
         var next  = self.grid.cellContent(positions.next);
@@ -264,7 +205,7 @@ GameManager.prototype.move = function (direction) {
           if((next && (tile.type != next.type)) || !next){
             if(next){
               console.log(next.type,distanceList[next.type]);
-          distanceList[tile.type] = ((Math.abs(maxDisplacement)+distanceList[next.type]) < Math.abs(distanceList[tile.type]))? (maxDisplacement+distanceList[next.type]) : distanceList[tile.type];
+          distanceList[tile.type] = ((Math.abs(maxDisplacement)+Math.abs(distanceList[next.type])) < Math.abs(distanceList[tile.type]))? (maxDisplacement+distanceList[next.type]) : distanceList[tile.type];
           }
           else{
             distanceList[tile.type] = (Math.abs(maxDisplacement) < Math.abs(distanceList[tile.type]))? maxDisplacement : distanceList[tile.type];
@@ -279,16 +220,51 @@ GameManager.prototype.move = function (direction) {
    
 });
 });
-}
-else{
-  traversals.x.forEach(function (x) {
+traversals.x.forEach(function (x){
     traversals.y.forEach(function (y) {
+      newcell = { x: x, y: y };
+      newtile = self.grid.cellContent(newcell);
+      
+      if(newtile){
+      var newPosition = {};
+      
+      var shiftlength = distanceList[newtile.type];
+      
+      newPosition.x = (Math.abs(shiftlength)*vector.x) + newcell.x;
+      newPosition.y = (Math.abs(shiftlength)*vector.y) + newcell.y;
+      
+      // console.log(newPosition);
+      self.moveTile(newtile, newPosition);
+      // }}
+      if (!self.positionsEqual(newcell, newPosition)) {
+          moved = true; // The tile moved from its original cell!
+        }
+        if (moved) {
+    // this.addRandomTile();
+
+    if (!self.movesAvailable()) {
+      this.over = true; // Game over!
+    }
+
+    self.actuate();
+  }
+        
+      }
+    });
+});
+}
+  else if((vector.x == 0 && vector.y ==1)||(vector.x == 0 && vector.y == -1)){
+  console.log("Moving down or up...");
+  traversals.y.forEach(function (y) {
+    traversals.x.forEach(function (x) {
       cell = { x: x, y: y };
       console.log(cell);
       tile = self.grid.cellContent(cell);
       
 
       if (tile) {
+        
+        if(tile.type == "W") distanceList[tile.type] =0;
         var positions = self.findFarthestPosition(cell, vector);
         
         var next  = self.grid.cellContent(positions.next);
@@ -317,7 +293,7 @@ else{
           if((next && (tile.type != next.type)) || !next){
             if(next){
               console.log(next.type,distanceList[next.type]);
-          distanceList[tile.type] = ((Math.abs(maxDisplacement)+distanceList[next.type]) < Math.abs(distanceList[tile.type]))? (maxDisplacement+distanceList[next.type]) : distanceList[tile.type];
+          distanceList[tile.type] = ((Math.abs(maxDisplacement)+Math.abs(distanceList[next.type])) < Math.abs(distanceList[tile.type]))? (maxDisplacement+distanceList[next.type]) : distanceList[tile.type];
           }
           else{
             distanceList[tile.type] = (Math.abs(maxDisplacement) < Math.abs(distanceList[tile.type]))? maxDisplacement : distanceList[tile.type];
@@ -332,10 +308,8 @@ else{
    
 });
 });
-}
-// console.log(distanceList.Z);
-traversals.x.forEach(function (x) {
-    traversals.y.forEach(function (y) {
+traversals.y.forEach(function (y){
+    traversals.x.forEach(function (x) {
       newcell = { x: x, y: y };
       newtile = self.grid.cellContent(newcell);
       
@@ -366,6 +340,9 @@ traversals.x.forEach(function (x) {
     });
 });
 
+}
+
+console.log("End of Move");
   
   };
 
@@ -393,8 +370,11 @@ GameManager.prototype.buildTraversals = function (vector) {
   }
 
   // Always traverse from the farthest cell in the chosen direction
-  if (vector.x === 1) traversals.x = traversals.x.reverse();
-  if (vector.y === 1) traversals.y = traversals.y.reverse();
+  if (vector.x == 1) traversals.x = traversals.x.reverse();
+  if (vector.y == 1) {
+    traversals.y = traversals.y.reverse();
+    traversals.x = traversals.x.reverse();
+  }
 
   return traversals;
 };
