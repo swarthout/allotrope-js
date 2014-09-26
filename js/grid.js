@@ -176,6 +176,7 @@ var tetras = {
   
 };
 
+
 function Grid(size, previousState) {
   this.size = size;
   this.cells = previousState ? this.fromState(previousState) : this.empty();
@@ -257,8 +258,13 @@ Grid.prototype.cellOccupied = function (cell) {
 
 Grid.prototype.cellContent = function (cell) {
   if (this.withinBounds(cell)) {
+    if(this.cells[cell.x][cell.y]){
+    if(this.cells[cell.x][cell.y].type !== "G"){
     return this.cells[cell.x][cell.y];
-  } else {
+    }
+    return null;
+  }
+  }else {
     return null;
   }
 };
@@ -273,7 +279,7 @@ Grid.prototype.addTetramino = function(type,pos,orientation){
   
   piece = tetras[type];
   var matrix = [];
-  matrix = tetras[type]["orientations"][orientation];
+  matrix = tetras[type].orientations[orientation];
 
 
   var xpos = pos.x;
@@ -301,6 +307,7 @@ Grid.prototype.addBall = function(pos){
   tile = new Tile(pos,"B");
   this.insertTile(tile);
 };
+
 
 Grid.prototype.removeTile = function (tile) {
   this.cells[tile.x][tile.y] = null;

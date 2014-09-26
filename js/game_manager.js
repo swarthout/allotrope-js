@@ -68,6 +68,7 @@ GameManager.prototype.addStartTiles = function () {
   this.grid.addWall({x:2,y:3});
   this.grid.addBall({x:0,y:0});
   
+  
 };
 
 
@@ -134,7 +135,7 @@ GameManager.prototype.moveTile = function (tile, cell) {
   tile.updatePosition(cell);
 };
 
-
+var goalcell = {x:1,y:0}; //This tells the program where the goal is. In the future this will be a JSON file and each board will have one with the goal location and the wall locations.
 // Move tiles on the grid in the specified direction
 GameManager.prototype.move = function (direction) {
   // 0: up, 1: right, 2: down, 3: left
@@ -167,16 +168,17 @@ GameManager.prototype.move = function (direction) {
   var count = 0;
   
   if(vector.x == 1 &&vector.y ==0 || vector.x == -1 && vector.y == 0){
-    console.log('Moving left or right...');
+    // console.log('Moving left or right...');
   traversals.x.forEach(function (x) {//{ for(var x = 0;x<this.size;x++){
     traversals.y.forEach(function (y) {//{ for(var y = 0;)
       cell = { x: x, y: y };
-      console.log(cell);
+      // console.log(cell);
       tile = self.grid.cellContent(cell);
       
 
       if (tile) {
-        if(tile.type == "W") distanceList[tile.type] =0;
+        if(tile.type == "W") distanceList[tile.type] = 0;
+        
         var positions = self.findFarthestPosition(cell, vector);
         
         var next  = self.grid.cellContent(positions.next);
@@ -234,7 +236,9 @@ traversals.x.forEach(function (x){
       newPosition.y = (Math.abs(shiftlength)*vector.y) + newcell.y;
       
       // console.log(newPosition);
+      
       self.moveTile(newtile, newPosition);
+      if(newtile.type == "B" && newPosition.x == goalcell.x && newPosition.y == goalcell.y) self.won = true;
       // }}
       if (!self.positionsEqual(newcell, newPosition)) {
           moved = true; // The tile moved from its original cell!
@@ -254,17 +258,18 @@ traversals.x.forEach(function (x){
 });
 }
   else if((vector.x == 0 && vector.y ==1)||(vector.x == 0 && vector.y == -1)){
-  console.log("Moving down or up...");
+  // console.log("Moving down or up...");
   traversals.y.forEach(function (y) {
     traversals.x.forEach(function (x) {
       cell = { x: x, y: y };
-      console.log(cell);
+      // console.log(cell);
       tile = self.grid.cellContent(cell);
       
 
       if (tile) {
         
         if(tile.type == "W") distanceList[tile.type] =0;
+        
         var positions = self.findFarthestPosition(cell, vector);
         
         var next  = self.grid.cellContent(positions.next);
@@ -321,7 +326,9 @@ traversals.y.forEach(function (y){
       newPosition.x = (Math.abs(shiftlength)*vector.x) + newcell.x;
       newPosition.y = (Math.abs(shiftlength)*vector.y) + newcell.y;
       // console.log(newPosition);
+      
       self.moveTile(newtile, newPosition);
+      if(newtile.type == "B" && newPosition.x == goalcell.x && newPosition.y == goalcell.y) self.won = true;
       // }}
       if (!self.positionsEqual(newcell, newPosition)) {
           moved = true; // The tile moved from its original cell!
