@@ -62,13 +62,19 @@ GameManager.prototype.setup = function () {
 GameManager.prototype.addStartTiles = function () {
   
   
-  this.grid.addTetramino("T",{x:0,y:4},"top");
-  this.grid.addTetramino("Z",{x:3,y:1},"bottom");
-  this.grid.addTetramino("S",{x:0,y:0},"right");
-  this.grid.addWall({x:2,y:3});
-  this.grid.addBall({x:0,y:0});
+  // this.grid.addTetramino("T",{x:0,y:4},"top");
+  // this.grid.addTetramino("Z",{x:3,y:1},"bottom");
+  // this.grid.addTetramino("S",{x:0,y:0},"right");
+  // this.grid.addWall({x:2,y:3});
+  // this.grid.addBall({x:0,y:0});
+  // this.goalcell = {x:1,y:0};
   
-  
+  for(var i = 0; i < level_tetras_list.length;i++){
+    this.grid.addTetramino(level_tetras_list[i].type,level_tetras_list[i].position,level_tetras_list[i].orientation);
+  }
+  this.grid.addWall(level_wall_position);
+  this.grid.addBall(level_ball_position);
+  this.goalcell = level_goalcell_position;
 };
 
 
@@ -135,7 +141,8 @@ GameManager.prototype.moveTile = function (tile, cell) {
   tile.updatePosition(cell);
 };
 
-var goalcell = {x:1,y:0}; //This tells the program where the goal is. In the future this will be a JSON file and each board will have one with the goal location and the wall locations.
+
+//This tells the program where the goal is. In the future this will be a JSON file and each board will have one with the goal location and the wall locations.
 // Move tiles on the grid in the specified direction
 GameManager.prototype.move = function (direction) {
   // 0: up, 1: right, 2: down, 3: left
@@ -238,7 +245,7 @@ traversals.x.forEach(function (x){
       // console.log(newPosition);
       
       self.moveTile(newtile, newPosition);
-      if(newtile.type == "B" && newPosition.x == goalcell.x && newPosition.y == goalcell.y) self.won = true;
+      if(newtile.type == "B" && newPosition.x == self.goalcell.x && newPosition.y == self.goalcell.y) self.won = true;
       // }}
       if (!self.positionsEqual(newcell, newPosition)) {
           moved = true; // The tile moved from its original cell!
@@ -264,7 +271,8 @@ traversals.x.forEach(function (x){
       cell = { x: x, y: y };
       // console.log(cell);
       tile = self.grid.cellContent(cell);
-      
+
+
 
       if (tile) {
         
@@ -328,7 +336,7 @@ traversals.y.forEach(function (y){
       // console.log(newPosition);
       
       self.moveTile(newtile, newPosition);
-      if(newtile.type == "B" && newPosition.x == goalcell.x && newPosition.y == goalcell.y) self.won = true;
+      if(newtile.type == "B" && newPosition.x == self.goalcell.x && newPosition.y == self.goalcell.y) self.won = true;
       // }}
       if (!self.positionsEqual(newcell, newPosition)) {
           moved = true; // The tile moved from its original cell!
@@ -352,7 +360,6 @@ traversals.y.forEach(function (y){
 console.log("End of Move");
   
   };
-
 
 // Get the vector representing the chosen direction
 GameManager.prototype.getVector = function (direction) {

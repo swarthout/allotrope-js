@@ -1,0 +1,68 @@
+/*
+    Document   : allotrope-js/style/homepage．css
+    Created on : 2014-09-30 06:48 PM
+    Author     : scott-swarthout
+    Description:
+    Purpose of the stylesheet follows.
+    To change this template use Tools | Templates.
+*/
+html{
+	background: #E9FAFA;
+}
+.title{
+	margin: 0;
+  padding: 0;
+  
+  color: #000035;
+  font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 80px;
+	text-align:center;}
+	
+
+ul{
+  columns:1;
+	
+	display:block;
+     padding:5px;
+/* 	width:500px; */
+	margin:0 auto;
+	list-style-type: none;
+	text-align:center;
+	
+	
+}
+li{
+	
+	vertical-align:middle;
+	/*position: relative;*/
+  display: block;
+  
+  padding: 15px 25px;
+/*   font-size: 25px; */
+  height: 50px;
+  line-height: 50px;
+  font-weight: bold;
+  border-radius: 3px;
+  color: white;
+  margin-top: 8px;
+  text-align: center;
+}
+button{
+ 	display: inline-block;
+ 	/*vertical-align: top;*/
+font-size:40px;
+  background: #382a63;
+  border-radius: 3px;
+
+	
+	
+  text-decoration: none;
+  color: #f9f6f2;
+  height: 60px;
+	width:500px;
+
+/*   line-height: 42px; */
+/*   display: block; */
+  text-align: center;
+  
+}
