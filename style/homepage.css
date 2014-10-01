@@ -9,18 +9,24 @@
 html{
 	background: #E9FAFA;
 }
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
 .title{
-	margin: 0;
+/* 	margin: 0; */
   padding: 0;
   
   color: #000035;
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
-  font-size: 80px;
-	text-align:center;}
+  font-size: 75px;
+	text-align:center;
+	text-decoration:none;
+}
 	
 
 ul{
-  columns:1;
+/*   columns:1; */
 	
 	display:block;
      padding:5px;
@@ -35,9 +41,9 @@ li{
 	
 	vertical-align:middle;
 	/*position: relative;*/
-  display: block;
+  display: inline-block;
   
-  padding: 50px 25px;
+  padding: 10px 20px;
 /*   font-size: 25px; */
   height: 100px;
   line-height: 50px;
@@ -59,7 +65,7 @@ font-size:40px;
   text-decoration: none;
   color: #f9f6f2;
   height: 60px;
-	width:500px;
+	width:300px;
 
 /*   line-height: 42px; */
 /*   display: block; */
