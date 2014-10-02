@@ -1,4 +1,4 @@
-var level_goalcell_position = {x:4,y:2};
+var level_goalcell_position = {x:2,y:1};
 
 var level_tetras_list = [
   {
@@ -11,9 +11,9 @@ var level_tetras_list = [
 },
 
 {
-    'type': "S",
+    'type': "T",
     "position":{x:0,y:0},
-    "orientation":"right",
+    "orientation":"left",
     
     
 },
@@ -28,6 +28,6 @@ var level_tetras_list = [
   
 ];
 
-var level_wall_position = {x:2,y:3};
+var level_wall_position = {x:3,y:2};
 
 var level_ball_position = {x:1,y:3};
