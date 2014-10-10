@@ -80,16 +80,6 @@ GameManager.prototype.addStartTiles = function () {
 
 
 
-// // Adds a tile in a random position
-// GameManager.prototype.addRandomTile = function () {
-//   if (this.grid.cellsAvailable()) {
-//     // var value = Math.random() < 0.9 ? 2 : 4;
-//     var tile = new Tile(this.grid.randomAvailableCell(), type);
-
-//     this.grid.insertTile(tile);
-//   }
-// };
-
 // Sends the updated grid to the actuator
 GameManager.prototype.actuate = function () {
   if (this.storageManager.getBestScore() < this.score) {
@@ -145,221 +135,129 @@ GameManager.prototype.moveTile = function (tile, cell) {
 //This tells the program where the goal is. In the future this will be a JSON file and each board will have one with the goal location and the wall locations.
 // Move tiles on the grid in the specified direction
 GameManager.prototype.move = function (direction) {
-  // 0: up, 1: right, 2: down, 3: left
-  var self = this;
-  
-  inList = function(item,list){
-    if(list[item] == 0) return true;
-    return !!list[item];
-  };
+    // 0: up, 1: right, 2: down, 3: left
+    var self = this;
+
+    inList = function (item, list) {
+        if (list[item] == 0) return true;
+        return !!list[item];
+    };
 
 
-  if (this.isGameTerminated()) return; // Don't do anything if the game's over
-  
-  var cell, tile;
+    if (this.isGameTerminated()) return; // Don't do anything if the game's over
 
-  var vector     = this.getVector(direction);
-  var traversals = this.buildTraversals(vector);
-  var moved      = false;
+    var cell, tile;
 
-  // Save the current tile positions and remove merger information
-  this.prepareTiles();
-  
-  getDistance = function(a,b){
-  
-  return(a==0?b:a);
-};
-  // Traverse the grid in the right direction and move tiles
-  
-  var distanceList = {};
-  var count = 0;
-  
-  if(vector.x == 1 &&vector.y ==0 || vector.x == -1 && vector.y == 0){
+    var vector = this.getVector(direction);
+    var traversals = this.buildTraversals(vector);
+    var moved = false;
+
+    // Save the current tile positions and remove merger information
+    this.prepareTiles();
+
+    getDistance = function (a, b) {
+
+        return(a == 0 ? b : a);
+    };
+    // Traverse the grid in the right direction and move tiles
+
+    var distanceList = {};
+    var count = 0;
     // console.log('Moving left or right...');
-  traversals.x.forEach(function (x) {//{ for(var x = 0;x<this.size;x++){
-    traversals.y.forEach(function (y) {//{ for(var y = 0;)
-      cell = { x: x, y: y };
-      // console.log(cell);
-      tile = self.grid.cellContent(cell);
-      
+    traversals.x.forEach(function (x) {//{ for(var x = 0;x<this.size;x++){
+        traversals.x.forEach(function (y) {//{ for(var y = 0;)
+            if (vector.x == 1 && vector.y == 0 || vector.x == -1 && vector.y == 0) {
+                cell = { x: x, y: y };
+            }
+            else {
+                cell = {x: y, y: x}
+            }
+            // console.log(cell);
+            tile = self.grid.cellContent(cell);
 
-      if (tile) {
-        if(tile.type == "W") distanceList[tile.type] = 0;
-        
-        var positions = self.findFarthestPosition(cell, vector);
-        
-        var next  = self.grid.cellContent(positions.next);
-        
-        var deltaX =positions.farthest.x - cell.x;
-        var deltaY =positions.farthest.y - cell.y;
-        
-        var maxDisplacement = getDistance(deltaX,deltaY);
-        // console.log(maxDisplacement,tile.type,Math.abs(maxDisplacement));
-        
-        
-        if(!inList(tile.type,distanceList)){
-          
-          // distanceList[tile.type] = maxDisplacement;
-          if(next){
-              console.log(next.type,distanceList[next.type]);
-          distanceList[tile.type] = maxDisplacement+distanceList[next.type];
-      
-        }
-        else{
-          distanceList[tile.type] = maxDisplacement;
-        }
-        }
-        
-        else{
-          if((next && (tile.type != next.type)) || !next){
-            if(next){
-              console.log(next.type,distanceList[next.type]);
-          distanceList[tile.type] = ((Math.abs(maxDisplacement)+Math.abs(distanceList[next.type])) < Math.abs(distanceList[tile.type]))? (maxDisplacement+distanceList[next.type]) : distanceList[tile.type];
-          }
-          else{
-            distanceList[tile.type] = (Math.abs(maxDisplacement) < Math.abs(distanceList[tile.type]))? maxDisplacement : distanceList[tile.type];
-          }
-          }
-          
-        }
-        console.log(distanceList);
-      }
-      
 
-   
-});
-});
-traversals.x.forEach(function (x){
-    traversals.y.forEach(function (y) {
-      newcell = { x: x, y: y };
-      newtile = self.grid.cellContent(newcell);
-      
-      if(newtile){
-      var newPosition = {};
-      
-      var shiftlength = distanceList[newtile.type];
-      
-      newPosition.x = (Math.abs(shiftlength)*vector.x) + newcell.x;
-      newPosition.y = (Math.abs(shiftlength)*vector.y) + newcell.y;
-      
-      // console.log(newPosition);
-      
-      self.moveTile(newtile, newPosition);
-      if(newtile.type == "B" && newPosition.x == self.goalcell.x && newPosition.y == self.goalcell.y) self.won = true;
-      // }}
-      if (!self.positionsEqual(newcell, newPosition)) {
-          moved = true; // The tile moved from its original cell!
-        }
-        if (moved) {
-    // this.addRandomTile();
+            if (tile) {
+                if (tile.type == "W") distanceList[tile.type] = 0;
 
-    if (!self.movesAvailable()) {
-      this.over = true; // Game over!
-    }
+                var positions = self.findFarthestPosition(cell, vector);
 
-    self.actuate();
-  }
-        
-      }
+                var next = self.grid.cellContent(positions.next);
+
+                var deltaX = positions.farthest.x - cell.x;
+                var deltaY = positions.farthest.y - cell.y;
+
+                var maxDisplacement = getDistance(deltaX, deltaY);
+                // console.log(maxDisplacement,tile.type,Math.abs(maxDisplacement));
+
+
+                if (!inList(tile.type, distanceList)) {
+
+                    // distanceList[tile.type] = maxDisplacement;
+                    if (next) {
+                        console.log(next.type, distanceList[next.type]);
+                        distanceList[tile.type] = maxDisplacement + distanceList[next.type];
+
+                    }
+                    else {
+                        distanceList[tile.type] = maxDisplacement;
+                    }
+                }
+
+                else {
+                    if ((next && (tile.type != next.type)) || !next) {
+                        if (next) {
+                            console.log(next.type, distanceList[next.type]);
+                            distanceList[tile.type] = ((Math.abs(maxDisplacement) + Math.abs(distanceList[next.type])) < Math.abs(distanceList[tile.type])) ? (maxDisplacement + distanceList[next.type]) : distanceList[tile.type];
+                        }
+                        else {
+                            distanceList[tile.type] = (Math.abs(maxDisplacement) < Math.abs(distanceList[tile.type])) ? maxDisplacement : distanceList[tile.type];
+                        }
+                    }
+
+                }
+                console.log(distanceList);
+            }
+
+
+        });
     });
-});
-}
-  else if((vector.x == 0 && vector.y ==1)||(vector.x == 0 && vector.y == -1)){
-  // console.log("Moving down or up...");
-  traversals.y.forEach(function (y) {
+
     traversals.x.forEach(function (x) {
-      cell = { x: x, y: y };
-      // console.log(cell);
-      tile = self.grid.cellContent(cell);
+        traversals.y.forEach(function (y) {
+            newcell = { x: x, y: y };
+            newtile = self.grid.cellContent(newcell);
 
+            if (newtile) {
+                var newPosition = {};
 
+                var shiftlength = distanceList[newtile.type];
 
-      if (tile) {
-        
-        if(tile.type == "W") distanceList[tile.type] =0;
-        
-        var positions = self.findFarthestPosition(cell, vector);
-        
-        var next  = self.grid.cellContent(positions.next);
-        
-        var deltaX =positions.farthest.x - cell.x;
-        var deltaY =positions.farthest.y - cell.y;
-        
-        var maxDisplacement = getDistance(deltaX,deltaY);
-        // console.log(maxDisplacement,tile.type,Math.abs(maxDisplacement));
-        
-        
-        if(!inList(tile.type,distanceList)){
-          
-          // distanceList[tile.type] = maxDisplacement;
-          if(next){
-              console.log(next.type,distanceList[next.type]);
-          distanceList[tile.type] = maxDisplacement+distanceList[next.type];
-      
-        }
-        else{
-          distanceList[tile.type] = maxDisplacement;
-        }
-        }
-        
-        else{
-          if((next && (tile.type != next.type)) || !next){
-            if(next){
-              console.log(next.type,distanceList[next.type]);
-          distanceList[tile.type] = ((Math.abs(maxDisplacement)+Math.abs(distanceList[next.type])) < Math.abs(distanceList[tile.type]))? (maxDisplacement+distanceList[next.type]) : distanceList[tile.type];
-          }
-          else{
-            distanceList[tile.type] = (Math.abs(maxDisplacement) < Math.abs(distanceList[tile.type]))? maxDisplacement : distanceList[tile.type];
-          }
-          }
-          
-        }
-        console.log(distanceList);
-      }
-      
+                newPosition.x = (Math.abs(shiftlength) * vector.x) + newcell.x;
+                newPosition.y = (Math.abs(shiftlength) * vector.y) + newcell.y;
 
-   
-});
-});
-traversals.y.forEach(function (y){
-    traversals.x.forEach(function (x) {
-      newcell = { x: x, y: y };
-      newtile = self.grid.cellContent(newcell);
-      
-      if(newtile){
-      var newPosition = {};
-      
-      var shiftlength = distanceList[newtile.type];
-      
-      newPosition.x = (Math.abs(shiftlength)*vector.x) + newcell.x;
-      newPosition.y = (Math.abs(shiftlength)*vector.y) + newcell.y;
-      // console.log(newPosition);
-      
-      self.moveTile(newtile, newPosition);
-      if(newtile.type == "B" && newPosition.x == self.goalcell.x && newPosition.y == self.goalcell.y) self.won = true;
-      // }}
-      if (!self.positionsEqual(newcell, newPosition)) {
-          moved = true; // The tile moved from its original cell!
-        }
-        if (moved) {
-    // this.addRandomTile();
+                // console.log(newPosition);
 
-    if (!self.movesAvailable()) {
-      this.over = true; // Game over!
-    }
+                self.moveTile(newtile, newPosition);
+                if (newtile.type == "B" && newPosition.x == self.goalcell.x && newPosition.y == self.goalcell.y) self.won = true;
+                // }}
+                if (!self.positionsEqual(newcell, newPosition)) {
+                    moved = true; // The tile moved from its original cell!
+                }
+                if (moved) {
+                    // this.addRandomTile();
 
-    self.actuate();
-  }
-        
-      }
+                    if (!self.movesAvailable()) {
+                        this.over = true; // Game over!
+                    }
+
+                    self.actuate();
+                }
+
+            }
+        });
     });
-});
+};
 
-}
-
-console.log("End of Move");
-  
-  };
 
 // Get the vector representing the chosen direction
 GameManager.prototype.getVector = function (direction) {
@@ -413,33 +311,6 @@ GameManager.prototype.movesAvailable = function () {
   return this.grid.cellsAvailable(); //|| this.tileMatchesAvailable();
 };
 
-// Check for available matches between tiles (more expensive check)
-// GameManager.prototype.tileMatchesAvailable = function () {
-//   var self = this;
-
-//   var tile;
-
-//   for (var x = 0; x < this.size; x++) {
-//     for (var y = 0; y < this.size; y++) {
-//       tile = this.grid.cellContent({ x: x, y: y });
-
-//       if (tile) {
-//         for (var direction = 0; direction < 4; direction++) {
-//           var vector = self.getVector(direction);
-//           var cell   = { x: x + vector.x, y: y + vector.y };
-
-//           var other  = self.grid.cellContent(cell);
-
-//           if (other && other.value === tile.value) {
-//             return true; // These two tiles can be merged
-//           }
-//         }
-//       }
-//     }
-//   }
-
-//   return false;
-// };
 
 GameManager.prototype.positionsEqual = function (first, second) {
   return first.x === second.x && first.y === second.y;
